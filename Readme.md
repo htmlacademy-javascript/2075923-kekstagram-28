@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм»
 
 * Студент: [Полина Цветкова](https://up.htmlacademy.ru/javascript/28/user/2075923).
-* Наставник: `Неизвестно`.
+* Наставник: [Павел Нюкало](https://htmlacademy.ru/profile/nyukalopavel).
 
 ---
 
