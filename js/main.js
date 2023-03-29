@@ -1,5 +1,3 @@
 import {createImages} from './data.js';
-createImages();
-
-import {differentUsers} from './pictures.js';
-differentUsers();
+import {renderPictures} from './pictures.js';
+renderPictures(createImages());
