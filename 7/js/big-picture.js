@@ -50,7 +50,7 @@ const renderGallery = (otherPictures) => {
     }
 
     const picture = otherPictures.find(
-      (item) => item.id === +userElement.dataset.userElementId
+      (item) => item.id === Number(userElement.dataset.userElementId)
     );
     showBigPicture(picture);
   });
