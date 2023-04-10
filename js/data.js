@@ -16,7 +16,7 @@ const MESSAGES = [
 const MIN_MESSAGES_NUMBER = 0;
 const MAX_MESSAGES_NUMBER = MESSAGES.length - 1;
 const MIN_COMMENTS_NUMBER = 1;
-const MAX_COMMENTS_NUMBER = 25;
+const MAX_COMMENTS_NUMBER = 20;
 const NAMES = [
   'Иван',
   'Хуан Себастьян',

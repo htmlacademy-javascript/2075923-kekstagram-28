@@ -1,11 +1,12 @@
 import { renderPictures } from './pictures.js';
 
+let picturesList = [];
+let bigPictureShownId = -1;
+let commentsShown = 0;
+const COMMENTS_MAX_SHOWN = 5;
 const bigPicture = document.querySelector('.big-picture');
 const container = document.querySelector('.pictures');
 const cancelButton = document.querySelector('.big-picture__cancel');
-
-let commentsShown = 0;
-const COMMENTS_MAX_SHOWN = 5;
 const socialCommentList = document.querySelector('.social__comments');
 const commentsLoader = document.querySelector('.comments-loader');
 const socialCommentsCount = document.querySelector('.social__comment-count');
@@ -28,8 +29,12 @@ const makeComment = ({ avatar, name, message }) => {
 };
 
 const renderComments = (comments) => {
+  const commentsShownPrev = commentsShown;
   commentsShown += COMMENTS_MAX_SHOWN;
 
+  if (commentsShownPrev === 0){
+    socialCommentList.innerHTML = '';
+  }
   if (commentsShown >= comments.length) {
     commentsLoader.classList.add('hidden');
     commentsShown = comments.length;
@@ -39,12 +44,11 @@ const renderComments = (comments) => {
 
   const fragment = document.createDocumentFragment();
 
-  for (let i = 0; i < commentsShown; i++) {
+  for (let i = commentsShownPrev; i < commentsShown; i++) {
     const commentElement = makeComment(comments[i]);
     fragment.append(commentElement);
   }
 
-  socialCommentList.innerHTML = '';
   socialCommentList.append(fragment);
   socialCommentsCount.innerHTML = `${commentsShown} из <span class="comments-count"> ${comments.length} </span> комментариев`;
 };
@@ -55,6 +59,7 @@ const hideBigPicture = () => {
   document.body.classList.remove('modal-open');
   document.removeEventListener('keydown', onDocumentKeydown);
   commentsShown = 0;
+  bigPictureShownId = -1;
 };
 
 function onDocumentKeydown(evt) {
@@ -75,14 +80,18 @@ const showBigPicture = (data) => {
   bigPicture.classList.remove('hidden');
   document.body.classList.add('modal-open');
   document.addEventListener('keydown', onDocumentKeydown);
-
+  bigPictureShownId = data.id;
   renderPicturesData(data);
   renderComments(data.comments);
-  commentsLoader.addEventListener('click', (evt) => {
-    evt.preventDefault();
-    renderComments(data.comments);
-  });
 };
+
+commentsLoader.addEventListener('click', (evt) => {
+  evt.preventDefault();
+  const data = picturesList.find(
+    (item) => item.id === bigPictureShownId
+  );
+  renderComments(data.comments);
+});
 
 const onCancelButtonClick = () => {
   hideBigPicture();
@@ -91,6 +100,7 @@ cancelButton.addEventListener('click', onCancelButtonClick);
 
 
 const renderGallery = (otherPictures) => {
+  picturesList = otherPictures;
   container.addEventListener('click', (evt) => {
     const userElement = evt.target.closest('[data-user-element-id]');
     if (!userElement) {
