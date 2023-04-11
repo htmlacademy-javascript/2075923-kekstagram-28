@@ -1,9 +1,9 @@
 import { renderPictures } from './pictures.js';
 
+const COMMENTS_MAX_SHOWN = 5;
 let picturesList = [];
 let bigPictureShownId = -1;
 let commentsShown = 0;
-const COMMENTS_MAX_SHOWN = 5;
 const bigPicture = document.querySelector('.big-picture');
 const container = document.querySelector('.pictures');
 const cancelButton = document.querySelector('.big-picture__cancel');
