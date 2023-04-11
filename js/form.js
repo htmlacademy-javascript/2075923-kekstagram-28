@@ -1,7 +1,7 @@
 
 const COMMENT_MAX_LENGTH = 140;
 const COMMENT_ERROR_TEXT = 'Превышен лимит символов';
-const HASGTAGS_ERROR_TEXT = 'Поле заполненно некорректно';
+const HASGTAGS_ERROR_TEXT = 'Ошибка в поле ввода. Пожалуйста, проверьте правильность заполнения:Хэш-тег начинается с # и состоит из букв и цифр без пробелов, спецсимволов, пунктуации и эмодзи;Длина хэш-тега не должна превышать 20 символов;Хэш-теги разделяются пробелами;Нельзя использовать один и тот же хэш-тег дважды;Максимальное количество хэш-тегов - 5.';
 const AVAILABLE_SYMBOLS = /^#[a-zа-яё0-9]{1,19}$/i;
 const HASHTAGS_LIMIT = 5;
 const loadForm = document.querySelector('.img-upload__form');
@@ -63,26 +63,26 @@ pristine.addValidator(
   COMMENT_ERROR_TEXT
 );
 
+const onFocus = () => {
+  document.removeEventListener('keydown', onDocumentKeydown);
+};
+
+const onBlur = () => {
+  document.addEventListener('keydown', onDocumentKeydown);
+};
+
 const fieldFocus = (field) => {
-  field.addEventListener('focus', () => {
-    document.removeEventListener('keydown', onDocumentKeydown);
-  });
+  field.addEventListener('focus', onFocus);
 };
 const fieldBlur = (field) => {
-  field.addEventListener('blur', () => {
-    document.addEventListener('keydown', onDocumentKeydown);
-  });
+  field.addEventListener('blur', onBlur);
 };
 
 const fieldFocusRemove = (field) => {
-  field.removeEventListener('focus', () => {
-    document.removeEventListener('keydown', onDocumentKeydown);
-  });
+  field.removeEventListener('focus', onFocus);
 };
 const fieldBlurRemove = (field) => {
-  field.removeEventListener('blur', () => {
-    document.addEventListener('keydown', onDocumentKeydown);
-  });
+  field.removeEventListener('blur', onBlur);
 };
 
 const focus = () => {
