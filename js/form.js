@@ -1,4 +1,8 @@
 
+import { resetScale } from './scale-pictures.js';
+import {resetEffects} from './filter.js';
+
+
 const COMMENT_MAX_LENGTH = 140;
 const COMMENT_ERROR_TEXT = 'Превышен лимит символов';
 const HASGTAGS_ERROR_TEXT = 'Ошибка в поле ввода. Пожалуйста, проверьте правильность заполнения:Хэш-тег начинается с # и состоит из букв и цифр без пробелов, спецсимволов, пунктуации и эмодзи;Длина хэш-тега не должна превышать 20 символов;Хэш-теги разделяются пробелами;Нельзя использовать один и тот же хэш-тег дважды;Максимальное количество хэш-тегов - 5.';
@@ -25,6 +29,8 @@ const onDocumentKeydown = (evt) => {
     body.classList.remove('modal-open');
     loadForm.reset();
     pristine.reset();
+    resetScale();
+    resetEffects ();
   }
 };
 
@@ -105,6 +111,8 @@ const closeImageForm = () => {
   loadForm.reset();
   pristine.reset();
   focusRemove();
+  resetScale ();
+  resetEffects ();
 };
 const openImageForm = () => {
   loadOverlay.classList.remove('hidden');
