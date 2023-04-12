@@ -1,6 +1,6 @@
 
 import { resetScale } from './scale-pictures.js';
-import {resetEffects} from './filter.js';
+import { resetEffects } from './filter.js';
 
 
 const COMMENT_MAX_LENGTH = 140;
@@ -22,6 +22,11 @@ const pristine = new Pristine(loadForm, {
   errorTextClass: 'img-upload__field-wrapper__error',
 });
 
+const SubmitButtonText = {
+  IDLE: 'Сохранить',
+  SENDING: 'Сохраняю...'
+};
+
 const onDocumentKeydown = (evt) => {
   if (evt.key === 'Escape') {
     evt.preventDefault();
@@ -30,7 +35,7 @@ const onDocumentKeydown = (evt) => {
     loadForm.reset();
     pristine.reset();
     resetScale();
-    resetEffects ();
+    resetEffects();
   }
 };
 
@@ -111,8 +116,8 @@ const closeImageForm = () => {
   loadForm.reset();
   pristine.reset();
   focusRemove();
-  resetScale ();
-  resetEffects ();
+  resetScale();
+  resetEffects();
 };
 const openImageForm = () => {
   loadOverlay.classList.remove('hidden');
@@ -122,8 +127,34 @@ const openImageForm = () => {
   focus();
 };
 
+const blockSubmitButton = () => {
+  buttonCloseImageForm.disabled = true;
+  buttonCloseImageForm.textContent = SubmitButtonText.SENDING;
+};
+
+const unblockSubmitButton = () => {
+  buttonCloseImageForm.disabled = false;
+  buttonCloseImageForm.textContent = SubmitButtonText.IDLE;
+};
+
+const formSubmit = (cb) => {
+  loadForm.addEventListener('submit', async (evt) => {
+    evt.preventDefault();
+
+    const isValid = pristine.validate();
+    if (isValid) {
+      blockSubmitButton();
+      await cb(new FormData(loadForm));
+      unblockSubmitButton();
+    }
+  });
+};
+
 const editImages = () => {
   openImageForm();
 };
 
 loadFile.addEventListener('change', editImages);
+
+export { closeImageForm, formSubmit };
+
