@@ -1,9 +1,3 @@
-const imagePreview = document.querySelector('.img-upload__preview img');
-const effectSlider = document.querySelector('.effect-level__slider');
-const effectValue = document.querySelector('.effect-level__value');
-const effectsContainer = document.querySelector('.effects');
-const effectSliderContainer = document.querySelector('.img-upload__effect-level');
-
 const FILTERS = [
   {
     name: 'none',
@@ -54,11 +48,16 @@ const FILTERS = [
     unit:'',
   }
 ];
+const imagePreview = document.querySelector('.img-upload__preview img');
+const effectSlider = document.querySelector('.effect-level__slider');
+const effectValue = document.querySelector('.effect-level__value');
+const effectsContainer = document.querySelector('.effects');
+const effectSliderContainer = document.querySelector('.img-upload__effect-level');
 
 const originalFilter = FILTERS[0];
 let chosenFilter = originalFilter;
 
-const isDefault = () => chosenFilter === originalFilter;//значения по умолчанию
+const isDefault = () => chosenFilter === originalFilter;
 
 const openSlider = () => {
   effectSliderContainer.classList.remove('hidden');

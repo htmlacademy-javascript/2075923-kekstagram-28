@@ -2,15 +2,15 @@ const STEP = 25;
 const MIN_VALUE = 25;
 const MAX_VALUE = 100;
 const DEFAULT_VALUE = 100;
+const INTEGER_VALUE = 100;
 const loadForm = document.querySelector('.img-upload__overlay');
 const scaleSmaller = loadForm.querySelector('.scale__control--smaller');
 const scaleBigger = loadForm.querySelector('.scale__control--bigger');
 const scaleValueInput = loadForm.querySelector('.scale__control--value');
-const imagePreview = loadForm.querySelector ('.img-upload__preview');
-
+const imagePreview = loadForm.querySelector ('.img-upload__preview img');
 
 const scaleImage = (value) => {
-  imagePreview.style.transform = `scale(${value / 100})`;
+  imagePreview.style.transform = `scale(${value / INTEGER_VALUE})`;
   scaleValueInput.value = `${value}%`;
 };
 
