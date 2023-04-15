@@ -1,6 +1,7 @@
 
 import { resetScale } from './scale-pictures.js';
 import { resetEffects } from './filter.js';
+import { showAlert } from './util.js';
 
 
 const COMMENT_MAX_LENGTH = 140;
@@ -8,6 +9,8 @@ const COMMENT_ERROR_TEXT = 'Превышен лимит символов';
 const HASGTAGS_ERROR_TEXT = 'Ошибка в поле ввода. Пожалуйста, проверьте правильность заполнения:Хэш-тег начинается с # и состоит из букв и цифр без пробелов, спецсимволов, пунктуации и эмодзи;Длина хэш-тега не должна превышать 20 символов;Хэш-теги разделяются пробелами;Нельзя использовать один и тот же хэш-тег дважды;Максимальное количество хэш-тегов - 5.';
 const AVAILABLE_SYMBOLS = /^#[a-zа-яё0-9]{1,19}$/i;
 const HASHTAGS_LIMIT = 5;
+const IMAGE_TYPES = ['jpg', 'jpeg', 'png'];
+const WRONG_IMAGE_TYPES_MESSAGE = 'Формат изображения должен быть png, jpeg или jpg';
 const loadForm = document.querySelector('.img-upload__form');
 const loadFile = loadForm.querySelector('#upload-file');
 const loadOverlay = loadForm.querySelector('.img-upload__overlay');
@@ -22,7 +25,7 @@ const pristine = new Pristine(loadForm, {
   errorTextClass: 'img-upload__field-wrapper__error',
 });
 
-const SubmitButtonText = {
+const DataButton = {
   IDLE: 'Сохранить',
   SENDING: 'Сохраняю...'
 };
@@ -74,39 +77,39 @@ pristine.addValidator(
   COMMENT_ERROR_TEXT
 );
 
-const onFocus = () => {
+const onFocusFieldFocus = () => {
   document.removeEventListener('keydown', onDocumentKeydown);
 };
 
-const onBlur = () => {
+const onBlurFieldBlur = () => {
   document.addEventListener('keydown', onDocumentKeydown);
 };
 
-const fieldFocus = (field) => {
-  field.addEventListener('focus', onFocus);
+const focusField = (field) => {
+  field.addEventListener('focus', onFocusFieldFocus);
 };
-const fieldBlur = (field) => {
-  field.addEventListener('blur', onBlur);
+const blurField = (field) => {
+  field.addEventListener('blur', onBlurFieldBlur);
 };
 
-const fieldFocusRemove = (field) => {
-  field.removeEventListener('focus', onFocus);
+const focusRemoveField = (field) => {
+  field.removeEventListener('focus', onFocusFieldFocus);
 };
-const fieldBlurRemove = (field) => {
-  field.removeEventListener('blur', onBlur);
+const blurRemoveField = (field) => {
+  field.removeEventListener('blur', onBlurFieldBlur);
 };
 
 const focus = () => {
-  fieldFocus(fieldHashtags);
-  fieldBlur(fieldHashtags);
-  fieldFocus(fieldСomments);
-  fieldBlur(fieldСomments);
+  focusField(fieldHashtags);
+  blurField(fieldHashtags);
+  focusField(fieldСomments);
+  blurField(fieldСomments);
 };
 const focusRemove = () => {
-  fieldFocusRemove(fieldHashtags);
-  fieldBlurRemove(fieldHashtags);
-  fieldFocusRemove(fieldСomments);
-  fieldBlurRemove(fieldСomments);
+  focusRemoveField(fieldHashtags);
+  blurRemoveField(fieldHashtags);
+  focusRemoveField(fieldСomments);
+  blurRemoveField(fieldСomments);
 };
 
 const closeImageForm = () => {
@@ -124,17 +127,24 @@ const openImageForm = () => {
   body.classList.add('modal-open');
   document.addEventListener('keydown', onDocumentKeydown);
   buttonCloseImageForm.addEventListener('click', closeImageForm);
+  const file = loadFile.files[0];
+  const fileName = file.name.toLowerCase();
+  const matches = IMAGE_TYPES.some((it) => fileName.endsWith(it));
+  if (!matches) {
+    showAlert(WRONG_IMAGE_TYPES_MESSAGE);
+    closeImageForm();
+  }
   focus();
 };
 
 const blockSubmitButton = () => {
   buttonCloseImageForm.disabled = true;
-  buttonCloseImageForm.textContent = SubmitButtonText.SENDING;
+  buttonCloseImageForm.textContent = DataButton.SENDING;
 };
 
 const unblockSubmitButton = () => {
   buttonCloseImageForm.disabled = false;
-  buttonCloseImageForm.textContent = SubmitButtonText.IDLE;
+  buttonCloseImageForm.textContent = DataButton.IDLE;
 };
 
 const formSubmit = (cb) => {
