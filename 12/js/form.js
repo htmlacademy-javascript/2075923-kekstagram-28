@@ -32,13 +32,7 @@ const pristine = new Pristine(loadForm, {
 
 const onDocumentKeydown = (evt) => {
   if ((evt.key === 'Escape') && !(body.classList.contains('error-active'))) {
-    evt.preventDefault();
-    loadOverlay.classList.add('hidden');
-    body.classList.remove('modal-open');
-    loadForm.reset();
-    pristine.reset();
-    resetScale();
-    resetEffects();
+    closeImageForm();
   }
 };
 
@@ -116,7 +110,7 @@ const focusRemove = () => {
   removeBlurListener(fieldСomments);
 };
 
-const closeImageForm = () => {
+function closeImageForm() {
   loadOverlay.classList.add('hidden');
   body.classList.remove('modal-open');
   removeKeydownListener();
@@ -125,7 +119,7 @@ const closeImageForm = () => {
   focusRemove();
   resetScale();
   resetEffects();
-};
+}
 
 const openImageForm = () => {
   loadOverlay.classList.remove('hidden');

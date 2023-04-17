@@ -27,6 +27,18 @@ const showAlert = (message) => {
 };
 
 
+const onDocumentSuccessClick = (evt) => {
+  if (!evt.target.closest('.success__inner')) {
+    closeSuccessMessage();
+  }
+};
+
+const onDocumentErrorClick = (evt) => {
+  if (!evt.target.closest('.error__inner')) {
+    closeErrorMessage();
+  }
+};
+
 const onErrorEscKeydown = (evt) => {
   if(evt.key === 'Escape') {
     evt.preventDefault();
@@ -62,6 +74,7 @@ const showSuccess = () => {
   body.append(templateSuccess);
   templateSuccess.classList.remove('hidden');
   document.addEventListener('keydown', onSuccessEscKeydown);
+  document.addEventListener('click', onDocumentSuccessClick);
 };
 
 const showError = () => {
@@ -69,10 +82,18 @@ const showError = () => {
   body.classList.add('error-active');
   templateError.classList.remove('hidden');
   document.addEventListener('keydown', onErrorEscKeydown);
+  document.addEventListener('click', onDocumentErrorClick);
 };
 
-function onModalButtonClick() {
+function onModalButtonClick(evt) {
   closeModalMessage();
+  if (evt.target.classList.contains('success__button')){
+    document.removeEventListener('keydown', onSuccessEscKeydown);
+    document.removeEventListener('click', onDocumentSuccessClick);
+  } else {
+    document.removeEventListener('keydown', onErrorEscKeydown);
+    document.removeEventListener('click', onDocumentErrorClick);
+  }
 }
 
 
