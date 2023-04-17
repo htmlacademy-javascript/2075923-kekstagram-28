@@ -49,13 +49,13 @@ function closeModalMessage() {
 }
 
 function closeErrorMessage() {
-  closeModalMessage();
   document.removeEventListener('keydown', onErrorEscKeydown);
+  closeModalMessage();
 }
 
 function closeSuccessMessage() {
-  closeModalMessage();
   document.removeEventListener('keydown', onSuccessEscKeydown);
+  closeModalMessage();
 }
 
 const showSuccess = () => {
