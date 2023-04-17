@@ -79,5 +79,13 @@ function onModalButtonClick() {
 successButton.addEventListener('click', onModalButtonClick);
 errorButton.addEventListener('click', onModalButtonClick);
 
+const debounce = (callback, timeoutDelay = 500) => {
+  let timeoutId;
+  return (...rest) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
+  };
+};
 
-export{showAlert, showSuccess,showError};
+
+export{showAlert, showSuccess,showError, debounce};

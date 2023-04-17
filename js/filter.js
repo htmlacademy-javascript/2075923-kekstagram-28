@@ -120,3 +120,4 @@ effectsContainer.addEventListener('change', filtersChange);
 effectSlider.noUiSlider.on('update', onSliderUpdate);
 
 export {resetEffects};
+
