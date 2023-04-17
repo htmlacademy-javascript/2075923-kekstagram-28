@@ -9,14 +9,13 @@ const Filter = {
   RANDOM: 'filter-random',
   DISCUSSED: 'filter-discussed',
 };
+let sortedPhotos = [];
+let currentFilter = Filter.DEFAULT;
 
 const filterContainerElement = document.querySelector('.img-filters');
 const filterFormElement = filterContainerElement.querySelector('.img-filters__form');
 const filterButton = filterFormElement.querySelectorAll('.img-filters__button');
 const imageContainerElement = document.querySelector('.pictures');
-
-let sortedPhotos = [];
-let currentFilter = Filter.DEFAULT;
 
 const getRandomSorting = () => Math.random() - SORT_NUMBER;
 
