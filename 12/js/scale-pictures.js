@@ -18,7 +18,7 @@ const scaleImage = (value) => {
 
 const resetScale = () => scaleImage(PictureConstant.DEFAULT_VALUE);
 
-const clickSmallerButton = () =>{
+const onSmallerButtonClick = () =>{
 
   const currentValue = parseInt(scaleValueInput.value,10);
   let newValue = currentValue - PictureConstant.STEP;
@@ -29,7 +29,7 @@ const clickSmallerButton = () =>{
   scaleImage(newValue);
 };
 
-const clickBiggerButton = () =>{
+const onBiggerButtonClick = () =>{
   const currentValue = parseInt(scaleValueInput.value,10);
 
   let newValue = currentValue + PictureConstant.STEP;
@@ -40,7 +40,7 @@ const clickBiggerButton = () =>{
   scaleImage(newValue);
 };
 
-scaleSmaller.addEventListener('click', clickSmallerButton);
-scaleBigger.addEventListener('click', clickBiggerButton);
+scaleSmaller.addEventListener('click', onSmallerButtonClick);
+scaleBigger.addEventListener('click', onBiggerButtonClick);
 
 export {resetScale};

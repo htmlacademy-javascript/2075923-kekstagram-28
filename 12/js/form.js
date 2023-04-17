@@ -1,8 +1,6 @@
-
 import { resetScale } from './scale-pictures.js';
 import { resetEffects } from './filter.js';
 import { showAlert } from './util.js';
-
 
 const COMMENT_MAX_LENGTH = 140;
 const COMMENT_ERROR_TEXT = 'Превышен лимит символов';
@@ -11,24 +9,26 @@ const AVAILABLE_SYMBOLS = /^#[a-zа-яё0-9]{1,19}$/i;
 const HASHTAGS_LIMIT = 5;
 const IMAGE_TYPES = ['jpg', 'jpeg', 'png'];
 const WRONG_IMAGE_TYPES_MESSAGE = 'Формат изображения должен быть png, jpeg или jpg';
+const DataButton = {
+  IDLE: 'Опубликовать',
+  SENDING: 'Публикую...',
+};
+
 const loadForm = document.querySelector('.img-upload__form');
 const loadFile = loadForm.querySelector('#upload-file');
 const loadOverlay = loadForm.querySelector('.img-upload__overlay');
 const buttonCloseImageForm = loadForm.querySelector('#upload-cancel');
+const buttonSubmitForm = loadForm.querySelector('.img-upload__submit');
 const body = document.querySelector('body');
 const fieldHashtags = loadForm.querySelector('.text__hashtags');
 const fieldСomments = loadForm.querySelector('.text__description');
+const preview = loadForm.querySelector('.img-upload__preview img');
 
 const pristine = new Pristine(loadForm, {
   classTo: 'img-upload__field-wrapper',
   errorTextParent: 'img-upload__field-wrapper',
   errorTextClass: 'img-upload__field-wrapper__error',
 });
-
-const DataButton = {
-  IDLE: 'Сохранить',
-  SENDING: 'Сохраняю...'
-};
 
 const onDocumentKeydown = (evt) => {
   if (evt.key === 'Escape') {
@@ -42,18 +42,14 @@ const onDocumentKeydown = (evt) => {
   }
 };
 
-
 const validateHashtagsCount = (tags) => tags.length <= HASHTAGS_LIMIT;
-
 
 const validateDifference = (tags) => {
   const lowerCaseTags = tags.map((tag) => tag.toLowerCase());
   return lowerCaseTags.length === new Set(lowerCaseTags).size;
 };
 
-
 const validHashtag = (tag) => AVAILABLE_SYMBOLS.test(tag);
-
 
 const validateTags = (value) => {
   const tags = value
@@ -77,39 +73,39 @@ pristine.addValidator(
   COMMENT_ERROR_TEXT
 );
 
-const onFocusFieldFocus = () => {
+const onFieldFocus = () => {
   document.removeEventListener('keydown', onDocumentKeydown);
 };
 
-const onBlurFieldBlur = () => {
+const onFieldBlur = () => {
   document.addEventListener('keydown', onDocumentKeydown);
 };
 
-const focusField = (field) => {
-  field.addEventListener('focus', onFocusFieldFocus);
+const setFocusListener = (field) => {
+  field.addEventListener('focus', onFieldFocus);
 };
-const blurField = (field) => {
-  field.addEventListener('blur', onBlurFieldBlur);
+const setBlurListener = (field) => {
+  field.addEventListener('blur', onFieldBlur);
 };
 
-const focusRemoveField = (field) => {
-  field.removeEventListener('focus', onFocusFieldFocus);
+const removeFocusListener = (field) => {
+  field.removeEventListener('focus', onFieldFocus);
 };
-const blurRemoveField = (field) => {
-  field.removeEventListener('blur', onBlurFieldBlur);
+const removeBlurListener = (field) => {
+  field.removeEventListener('blur', onFieldBlur);
 };
 
 const focus = () => {
-  focusField(fieldHashtags);
-  blurField(fieldHashtags);
-  focusField(fieldСomments);
-  blurField(fieldСomments);
+  setFocusListener(fieldHashtags);
+  setBlurListener(fieldHashtags);
+  setFocusListener(fieldСomments);
+  setBlurListener(fieldСomments);
 };
 const focusRemove = () => {
-  focusRemoveField(fieldHashtags);
-  blurRemoveField(fieldHashtags);
-  focusRemoveField(fieldСomments);
-  blurRemoveField(fieldСomments);
+  removeFocusListener(fieldHashtags);
+  removeBlurListener(fieldHashtags);
+  removeFocusListener(fieldСomments);
+  removeBlurListener(fieldСomments);
 };
 
 const closeImageForm = () => {
@@ -122,6 +118,7 @@ const closeImageForm = () => {
   resetScale();
   resetEffects();
 };
+
 const openImageForm = () => {
   loadOverlay.classList.remove('hidden');
   body.classList.add('modal-open');
@@ -133,18 +130,20 @@ const openImageForm = () => {
   if (!matches) {
     showAlert(WRONG_IMAGE_TYPES_MESSAGE);
     closeImageForm();
+  } else {
+    preview.src = URL.createObjectURL(file);
+    focus();
   }
-  focus();
 };
 
 const blockSubmitButton = () => {
-  buttonCloseImageForm.disabled = true;
-  buttonCloseImageForm.textContent = DataButton.SENDING;
+  buttonSubmitForm.disabled = true;
+  buttonSubmitForm.textContent = DataButton.SENDING;
 };
 
 const unblockSubmitButton = () => {
-  buttonCloseImageForm.disabled = false;
-  buttonCloseImageForm.textContent = DataButton.IDLE;
+  buttonSubmitForm.disabled = false;
+  buttonSubmitForm.textContent = DataButton.IDLE;
 };
 
 const formSubmit = (cb) => {
@@ -167,4 +166,3 @@ const editImages = () => {
 loadFile.addEventListener('change', editImages);
 
 export { closeImageForm, formSubmit };
-

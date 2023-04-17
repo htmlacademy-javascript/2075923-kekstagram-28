@@ -27,27 +27,20 @@ const showAlert = (message) => {
 };
 
 
-const onModalEscKeydown = (evt) => {
+const onErrorEscKeydown = (evt) => {
   if(evt.key === 'Escape') {
     evt.preventDefault();
-    closeModalMessage();
+    closeErrorMessage();
   }
 };
 
 
-function isSuccessModal (evt) {
-  if (!evt.target.classList.contains('success')) {
-    return;
+const onSuccessEscKeydown = (evt) => {
+  if(evt.key === 'Escape') {
+    evt.preventDefault();
+    closeSuccessMessage();
   }
-  closeModalMessage();
-}
-
-function isErrorModal (evt) {
-  if (!evt.target.classList.contains('error')) {
-    return;
-  }
-  closeModalMessage();
-}
+};
 
 function closeModalMessage() {
   templateSuccess.classList.add('hidden');
@@ -55,24 +48,36 @@ function closeModalMessage() {
   body.classList.remove('error-active');
 }
 
+function closeErrorMessage() {
+  closeModalMessage();
+  document.removeEventListener('keydown', onErrorEscKeydown);
+}
+
+function closeSuccessMessage() {
+  closeModalMessage();
+  document.removeEventListener('keydown', onSuccessEscKeydown);
+}
+
 const showSuccess = () => {
   body.append(templateSuccess);
   templateSuccess.classList.remove('hidden');
-  document.addEventListener('keydown', onModalEscKeydown);
+  document.addEventListener('keydown', onSuccessEscKeydown);
 };
 
 const showError = () => {
   body.append(templateError);
   body.classList.add('error-active');
   templateError.classList.remove('hidden');
-  document.addEventListener('keydown', onModalEscKeydown);
+  document.addEventListener('keydown', onErrorEscKeydown);
 };
 
+function onModalButtonClick() {
+  closeModalMessage();
+}
 
-successButton.addEventListener('click', closeModalMessage);
-errorButton.addEventListener('click', closeModalMessage);
-document.addEventListener('click', isSuccessModal);
-document.addEventListener('click', isErrorModal);
+
+successButton.addEventListener('click', onModalButtonClick);
+errorButton.addEventListener('click', onModalButtonClick);
 
 
 export{showAlert, showSuccess,showError};
