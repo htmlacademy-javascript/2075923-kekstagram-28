@@ -62,11 +62,13 @@ function closeModalMessage() {
 
 function closeErrorMessage() {
   document.removeEventListener('keydown', onErrorEscKeydown);
+  document.removeEventListener('click', onDocumentErrorClick);
   closeModalMessage();
 }
 
 function closeSuccessMessage() {
   document.removeEventListener('keydown', onSuccessEscKeydown);
+  document.removeEventListener('click', onDocumentSuccessClick);
   closeModalMessage();
 }
 
@@ -86,13 +88,10 @@ const showError = () => {
 };
 
 function onModalButtonClick(evt) {
-  closeModalMessage();
   if (evt.target.classList.contains('success__button')){
-    document.removeEventListener('keydown', onSuccessEscKeydown);
-    document.removeEventListener('click', onDocumentSuccessClick);
+    closeSuccessMessage();
   } else {
-    document.removeEventListener('keydown', onErrorEscKeydown);
-    document.removeEventListener('click', onDocumentErrorClick);
+    closeErrorMessage();
   }
 }
 
