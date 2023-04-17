@@ -31,7 +31,7 @@ const pristine = new Pristine(loadForm, {
 });
 
 const onDocumentKeydown = (evt) => {
-  if (evt.key === 'Escape') {
+  if ((evt.key === 'Escape') && !(body.classList.contains('error-active'))) {
     evt.preventDefault();
     loadOverlay.classList.add('hidden');
     body.classList.remove('modal-open');
@@ -73,12 +73,20 @@ pristine.addValidator(
   COMMENT_ERROR_TEXT
 );
 
-const onFieldFocus = () => {
+const removeKeydownListener = () => {
   document.removeEventListener('keydown', onDocumentKeydown);
 };
 
-const onFieldBlur = () => {
+const addKeydownListener = () => {
   document.addEventListener('keydown', onDocumentKeydown);
+};
+
+const onFieldFocus = () => {
+  removeKeydownListener();
+};
+
+const onFieldBlur = () => {
+  addKeydownListener();
 };
 
 const setFocusListener = (field) => {
@@ -111,7 +119,7 @@ const focusRemove = () => {
 const closeImageForm = () => {
   loadOverlay.classList.add('hidden');
   body.classList.remove('modal-open');
-  document.removeEventListener('keydown', onDocumentKeydown);
+  removeKeydownListener();
   loadForm.reset();
   pristine.reset();
   focusRemove();
@@ -122,7 +130,7 @@ const closeImageForm = () => {
 const openImageForm = () => {
   loadOverlay.classList.remove('hidden');
   body.classList.add('modal-open');
-  document.addEventListener('keydown', onDocumentKeydown);
+  addKeydownListener();
   buttonCloseImageForm.addEventListener('click', closeImageForm);
   const file = loadFile.files[0];
   const fileName = file.name.toLowerCase();
