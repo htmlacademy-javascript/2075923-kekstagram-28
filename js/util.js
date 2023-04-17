@@ -1,11 +1,9 @@
 const ALERT_SHOW_TIME = 5000;
-
-const getRandomInteger = (a, b) => {
-  const lower = Math.ceil(Math.min(a, b));
-  const upper = Math.floor(Math.max(a, b));
-  const result = Math.random() * (upper - lower + 1) + lower;
-  return Math.floor(result);
-};
+const templateError = document.querySelector('#error').content.querySelector('.error');
+const errorButton = templateError.querySelector('.error__button');
+const templateSuccess = document.querySelector('#success').content.querySelector('.success');
+const successButton = templateSuccess.querySelector('.success__button');
+const body = document.querySelector('body');
 
 const showAlert = (message) => {
   const alertContainer = document.createElement('div');
@@ -28,80 +26,86 @@ const showAlert = (message) => {
   }, ALERT_SHOW_TIME);
 };
 
-const showSuccess = () => {
-  const template = document.querySelector('#success').content.querySelector('.success');
-  const fragment = document.createDocumentFragment();
-  const newSuccessMessage = template.cloneNode(true);
-  fragment.appendChild(newSuccessMessage);
-  document.body.appendChild(fragment);
 
-  const successMessage = document.querySelector('.success');
-  const successButton = document.querySelector('.success__button');
-  successMessage.classList.add('.hidden');
+const onDocumentSuccessClick = (evt) => {
+  if (!evt.target.closest('.success__inner')) {
+    closeSuccessMessage();
+  }
+};
 
-  const closeSuccessMessage = (evt) => {
-    successMessage.classList.add('hidden');
-    successButton.removeEventListener('click', (evt));
-    document.removeEventListener('keydown', (evt));
-  };
+const onDocumentErrorClick = (evt) => {
+  if (!evt.target.closest('.error__inner')) {
+    closeErrorMessage();
+  }
+};
 
-  successButton.addEventListener('click', (evt) => {
+const onErrorEscKeydown = (evt) => {
+  if(evt.key === 'Escape') {
+    evt.preventDefault();
+    closeErrorMessage();
+  }
+};
+
+
+const onSuccessEscKeydown = (evt) => {
+  if(evt.key === 'Escape') {
     evt.preventDefault();
     closeSuccessMessage();
-  });
+  }
+};
 
-  document.addEventListener('keydown', (evt) => {
-    if (evt.key === 'Escape') {
-      evt.preventDefault();
-      closeSuccessMessage();
-    }
-  });
+const closeModalMessage = () => {
+  templateSuccess.classList.add('hidden');
+  templateError.classList.add('hidden');
+  body.classList.remove('error-active');
+};
 
-  document.addEventListener('click', (evt) => {
-    const message = evt.target.matches('.success');
-    if (!message) {
-      return;
-    }
-    closeSuccessMessage();
-  });
+function closeErrorMessage() {
+  document.removeEventListener('keydown', onErrorEscKeydown);
+  document.removeEventListener('click', onDocumentErrorClick);
+  closeModalMessage();
+}
+
+function closeSuccessMessage() {
+  document.removeEventListener('keydown', onSuccessEscKeydown);
+  document.removeEventListener('click', onDocumentSuccessClick);
+  closeModalMessage();
+}
+
+const showSuccess = () => {
+  body.append(templateSuccess);
+  templateSuccess.classList.remove('hidden');
+  document.addEventListener('keydown', onSuccessEscKeydown);
+  document.addEventListener('click', onDocumentSuccessClick);
 };
 
 const showError = () => {
-  const template = document.querySelector('#error').content.querySelector('.error');
-  const fragment = document.createDocumentFragment();
-  const newErrorMessage = template.cloneNode(true);
-  fragment.appendChild(newErrorMessage);
-  document.body.appendChild(fragment);
-
-  const errorMessage = document.querySelector('.error');
-  const errorButton = document.querySelector('.error__button');
-  errorMessage.classList.add('.hidden');
-
-  const closeErrorMessage = (evt) => {
-    errorMessage.classList.add('hidden');
-    errorButton.removeEventListener('click', (evt));
-    document.removeEventListener('keydown', (evt));
-  };
-
-  errorButton.addEventListener('click', (evt) => {
-    closeErrorMessage();
-    evt.preventDefault();
-  });
-
-  document.addEventListener('keydown', (evt) => {
-    if (evt.key === 'Escape') {
-      closeErrorMessage();
-      evt.preventDefault();
-    }
-  });
-
-  document.addEventListener('click', (evt) => {
-    const message = evt.target.matches('.error');
-    if (!message) {
-      return;
-    }
-    closeErrorMessage();
-  });
+  body.append(templateError);
+  body.classList.add('error-active');
+  templateError.classList.remove('hidden');
+  document.addEventListener('keydown', onErrorEscKeydown);
+  document.addEventListener('click', onDocumentErrorClick);
 };
 
-export{getRandomInteger, showAlert, showSuccess,showError};
+const onModalButtonClick = (evt) => {
+  if (evt.target.classList.contains('success__button')){
+    closeSuccessMessage();
+  } else if (evt.target.classList.contains('error__button')){
+    closeErrorMessage();
+  }
+};
+
+
+successButton.addEventListener('click', onModalButtonClick);
+errorButton.addEventListener('click', onModalButtonClick);
+
+const debounce = (callback, timeoutDelay = 500) => {
+  let timeoutId;
+  return (...rest) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
+  };
+};
+
+
+export{showAlert, showSuccess,showError, debounce};

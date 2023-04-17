@@ -1,7 +1,7 @@
 import { renderPictures } from './pictures.js';
 
 const COMMENTS_MAX_SHOWN = 5;
-let picturesList = [];
+let pictures = [];
 let bigPictureShownId = -1;
 let commentsShown = 0;
 const bigPicture = document.querySelector('.big-picture');
@@ -53,7 +53,6 @@ const renderComments = (comments) => {
   socialCommentsCount.innerHTML = `${commentsShown} из <span class="comments-count"> ${comments.length} </span> комментариев`;
 };
 
-
 const hideBigPicture = () => {
   bigPicture.classList.add('hidden');
   document.body.classList.remove('modal-open');
@@ -87,7 +86,7 @@ const showBigPicture = (data) => {
 
 commentsLoader.addEventListener('click', (evt) => {
   evt.preventDefault();
-  const data = picturesList.find(
+  const data = pictures.find(
     (item) => item.id === bigPictureShownId
   );
   renderComments(data.comments);
@@ -98,9 +97,8 @@ const onCancelButtonClick = () => {
 };
 cancelButton.addEventListener('click', onCancelButtonClick);
 
-
 const renderGallery = (otherPictures) => {
-  picturesList = otherPictures;
+  pictures = otherPictures;
   container.addEventListener('click', (evt) => {
     const userElement = evt.target.closest('[data-user-element-id]');
     if (!userElement) {

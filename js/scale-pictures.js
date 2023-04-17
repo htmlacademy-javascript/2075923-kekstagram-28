@@ -1,8 +1,10 @@
-const STEP = 25;
-const MIN_VALUE = 25;
-const MAX_VALUE = 100;
-const DEFAULT_VALUE = 100;
-const INTEGER_VALUE = 100;
+const PictureConstant = {
+  STEP: 25,
+  MIN_VALUE: 25,
+  MAX_VALUE: 100,
+  DEFAULT_VALUE: 100,
+  INTEGER_VALUE: 100,
+};
 const loadForm = document.querySelector('.img-upload__overlay');
 const scaleSmaller = loadForm.querySelector('.scale__control--smaller');
 const scaleBigger = loadForm.querySelector('.scale__control--bigger');
@@ -10,35 +12,35 @@ const scaleValueInput = loadForm.querySelector('.scale__control--value');
 const imagePreview = loadForm.querySelector ('.img-upload__preview img');
 
 const scaleImage = (value) => {
-  imagePreview.style.transform = `scale(${value / INTEGER_VALUE})`;
+  imagePreview.style.transform = `scale(${value / PictureConstant.INTEGER_VALUE})`;
   scaleValueInput.value = `${value}%`;
 };
 
-const resetScale = () => scaleImage(DEFAULT_VALUE);
+const resetScale = () => scaleImage(PictureConstant.DEFAULT_VALUE);
 
-const smallerButtonClick = () =>{
+const onSmallerButtonClick = () =>{
 
   const currentValue = parseInt(scaleValueInput.value,10);
-  let newValue = currentValue - STEP;
+  let newValue = currentValue - PictureConstant.STEP;
 
-  if (newValue < MIN_VALUE){
-    newValue = MIN_VALUE;
+  if (newValue < PictureConstant.MIN_VALUE){
+    newValue = PictureConstant.MIN_VALUE;
   }
   scaleImage(newValue);
 };
 
-const biggerButtonClick = () =>{
+const onBiggerButtonClick = () =>{
   const currentValue = parseInt(scaleValueInput.value,10);
 
-  let newValue = currentValue + STEP;
+  let newValue = currentValue + PictureConstant.STEP;
 
-  if (newValue > MAX_VALUE){
-    newValue = MAX_VALUE;
+  if (newValue > PictureConstant.MAX_VALUE){
+    newValue = PictureConstant.MAX_VALUE;
   }
   scaleImage(newValue);
 };
 
-scaleSmaller.addEventListener('click', smallerButtonClick);
-scaleBigger.addEventListener('click', biggerButtonClick);
+scaleSmaller.addEventListener('click', onSmallerButtonClick);
+scaleBigger.addEventListener('click', onBiggerButtonClick);
 
 export {resetScale};

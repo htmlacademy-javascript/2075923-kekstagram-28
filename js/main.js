@@ -1,11 +1,9 @@
-import {createImages} from './data.js';
 import { renderGallery } from './big-picture.js';
 import {closeImageForm, formSubmit} from './form.js';
 import { showAlert, showSuccess, showError} from './util.js';
 import {getData, sendData} from './api.js';
-import './form.js';
-const images = createImages();
-renderGallery(images);
+import { initializePhotoSortingAndFilters } from './sorting.js';
+
 
 formSubmit(async (data) => {
   try {
@@ -19,6 +17,7 @@ formSubmit(async (data) => {
 
 try {
   const data = await getData();
+  initializePhotoSortingAndFilters(data);
   renderGallery(data);
 } catch (err) {
   showAlert(err.message);

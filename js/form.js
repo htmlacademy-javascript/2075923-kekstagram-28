@@ -1,20 +1,28 @@
-
 import { resetScale } from './scale-pictures.js';
 import { resetEffects } from './filter.js';
-
+import { showAlert } from './util.js';
 
 const COMMENT_MAX_LENGTH = 140;
 const COMMENT_ERROR_TEXT = 'Превышен лимит символов';
 const HASGTAGS_ERROR_TEXT = 'Ошибка в поле ввода. Пожалуйста, проверьте правильность заполнения:Хэш-тег начинается с # и состоит из букв и цифр без пробелов, спецсимволов, пунктуации и эмодзи;Длина хэш-тега не должна превышать 20 символов;Хэш-теги разделяются пробелами;Нельзя использовать один и тот же хэш-тег дважды;Максимальное количество хэш-тегов - 5.';
 const AVAILABLE_SYMBOLS = /^#[a-zа-яё0-9]{1,19}$/i;
 const HASHTAGS_LIMIT = 5;
+const IMAGE_TYPES = ['jpg', 'jpeg', 'png'];
+const WRONG_IMAGE_TYPES_MESSAGE = 'Формат изображения должен быть png, jpeg или jpg';
+const DataButton = {
+  IDLE: 'Опубликовать',
+  SENDING: 'Публикую...',
+};
+
 const loadForm = document.querySelector('.img-upload__form');
 const loadFile = loadForm.querySelector('#upload-file');
 const loadOverlay = loadForm.querySelector('.img-upload__overlay');
 const buttonCloseImageForm = loadForm.querySelector('#upload-cancel');
+const buttonSubmitForm = loadForm.querySelector('.img-upload__submit');
 const body = document.querySelector('body');
 const fieldHashtags = loadForm.querySelector('.text__hashtags');
 const fieldСomments = loadForm.querySelector('.text__description');
+const preview = loadForm.querySelector('.img-upload__preview img');
 
 const pristine = new Pristine(loadForm, {
   classTo: 'img-upload__field-wrapper',
@@ -22,35 +30,20 @@ const pristine = new Pristine(loadForm, {
   errorTextClass: 'img-upload__field-wrapper__error',
 });
 
-const SubmitButtonText = {
-  IDLE: 'Сохранить',
-  SENDING: 'Сохраняю...'
-};
-
 const onDocumentKeydown = (evt) => {
-  if (evt.key === 'Escape') {
-    evt.preventDefault();
-    loadOverlay.classList.add('hidden');
-    body.classList.remove('modal-open');
-    loadForm.reset();
-    pristine.reset();
-    resetScale();
-    resetEffects();
+  if ((evt.key === 'Escape') && !(body.classList.contains('error-active'))) {
+    closeImageForm();
   }
 };
 
-
 const validateHashtagsCount = (tags) => tags.length <= HASHTAGS_LIMIT;
-
 
 const validateDifference = (tags) => {
   const lowerCaseTags = tags.map((tag) => tag.toLowerCase());
   return lowerCaseTags.length === new Set(lowerCaseTags).size;
 };
 
-
 const validHashtag = (tag) => AVAILABLE_SYMBOLS.test(tag);
-
 
 const validateTags = (value) => {
   const tags = value
@@ -74,67 +67,85 @@ pristine.addValidator(
   COMMENT_ERROR_TEXT
 );
 
-const onFocus = () => {
+const removeKeydownListener = () => {
   document.removeEventListener('keydown', onDocumentKeydown);
 };
 
-const onBlur = () => {
+const addKeydownListener = () => {
   document.addEventListener('keydown', onDocumentKeydown);
 };
 
-const fieldFocus = (field) => {
-  field.addEventListener('focus', onFocus);
-};
-const fieldBlur = (field) => {
-  field.addEventListener('blur', onBlur);
+const onFieldFocus = () => {
+  removeKeydownListener();
 };
 
-const fieldFocusRemove = (field) => {
-  field.removeEventListener('focus', onFocus);
+const onFieldBlur = () => {
+  addKeydownListener();
 };
-const fieldBlurRemove = (field) => {
-  field.removeEventListener('blur', onBlur);
+
+const setFocusListener = (field) => {
+  field.addEventListener('focus', onFieldFocus);
+};
+const setBlurListener = (field) => {
+  field.addEventListener('blur', onFieldBlur);
+};
+
+const removeFocusListener = (field) => {
+  field.removeEventListener('focus', onFieldFocus);
+};
+const removeBlurListener = (field) => {
+  field.removeEventListener('blur', onFieldBlur);
 };
 
 const focus = () => {
-  fieldFocus(fieldHashtags);
-  fieldBlur(fieldHashtags);
-  fieldFocus(fieldСomments);
-  fieldBlur(fieldСomments);
+  setFocusListener(fieldHashtags);
+  setBlurListener(fieldHashtags);
+  setFocusListener(fieldСomments);
+  setBlurListener(fieldСomments);
 };
 const focusRemove = () => {
-  fieldFocusRemove(fieldHashtags);
-  fieldBlurRemove(fieldHashtags);
-  fieldFocusRemove(fieldСomments);
-  fieldBlurRemove(fieldСomments);
+  removeFocusListener(fieldHashtags);
+  removeBlurListener(fieldHashtags);
+  removeFocusListener(fieldСomments);
+  removeBlurListener(fieldСomments);
 };
 
-const closeImageForm = () => {
+function closeImageForm() {
   loadOverlay.classList.add('hidden');
   body.classList.remove('modal-open');
-  document.removeEventListener('keydown', onDocumentKeydown);
+  removeKeydownListener();
   loadForm.reset();
   pristine.reset();
   focusRemove();
   resetScale();
   resetEffects();
-};
+}
+
 const openImageForm = () => {
   loadOverlay.classList.remove('hidden');
   body.classList.add('modal-open');
-  document.addEventListener('keydown', onDocumentKeydown);
+  addKeydownListener();
   buttonCloseImageForm.addEventListener('click', closeImageForm);
-  focus();
+  const file = loadFile.files[0];
+  const fileName = file.name.toLowerCase();
+  const matches = IMAGE_TYPES.some((it) => fileName.endsWith(it));
+  if (!matches) {
+    showAlert(WRONG_IMAGE_TYPES_MESSAGE);
+    closeImageForm();
+  } else {
+    preview.src = URL.createObjectURL(file);
+    focus();
+  }
 };
 
 const blockSubmitButton = () => {
-  buttonCloseImageForm.disabled = true;
-  buttonCloseImageForm.textContent = SubmitButtonText.SENDING;
+  buttonSubmitForm.disabled = true;
+  buttonSubmitForm.textContent = DataButton.SENDING;
 };
 
 const unblockSubmitButton = () => {
-  buttonCloseImageForm.disabled = false;
-  buttonCloseImageForm.textContent = SubmitButtonText.IDLE;
+  buttonSubmitForm.disabled = false;
+  buttonSubmitForm.textContent = DataButton.IDLE;
 };
 
 const formSubmit = (cb) => {
@@ -157,4 +168,3 @@ const editImages = () => {
 loadFile.addEventListener('change', editImages);
 
 export { closeImageForm, formSubmit };
-
