@@ -49,11 +49,9 @@ const renderComments = (comments) => {
     fragment.append(commentElement);
   }
 
-  const commentsTemplate = `${commentsShown} из <span class="comments-count"> ${comments.length} </span> комментариев`;
   socialCommentList.append(fragment);
-  socialCommentsCount.innerHTML = commentsTemplate;
+  socialCommentsCount.innerHTML = `${commentsShown} из <span class="comments-count"> ${comments.length} </span> комментариев`;
 };
-
 
 const hideBigPicture = () => {
   bigPicture.classList.add('hidden');
@@ -98,7 +96,6 @@ const onCancelButtonClick = () => {
   hideBigPicture();
 };
 cancelButton.addEventListener('click', onCancelButtonClick);
-
 
 const renderGallery = (otherPictures) => {
   pictures = otherPictures;
