@@ -54,11 +54,11 @@ const onSuccessEscKeydown = (evt) => {
   }
 };
 
-function closeModalMessage() {
+const closeModalMessage = () => {
   templateSuccess.classList.add('hidden');
   templateError.classList.add('hidden');
   body.classList.remove('error-active');
-}
+};
 
 function closeErrorMessage() {
   document.removeEventListener('keydown', onErrorEscKeydown);
@@ -87,13 +87,13 @@ const showError = () => {
   document.addEventListener('click', onDocumentErrorClick);
 };
 
-function onModalButtonClick(evt) {
+const onModalButtonClick = (evt) => {
   if (evt.target.classList.contains('success__button')){
     closeSuccessMessage();
   } else if (evt.target.classList.contains('error__button')){
     closeErrorMessage();
   }
-}
+};
 
 
 successButton.addEventListener('click', onModalButtonClick);
