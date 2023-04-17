@@ -90,7 +90,7 @@ const showError = () => {
 function onModalButtonClick(evt) {
   if (evt.target.classList.contains('success__button')){
     closeSuccessMessage();
-  } else {
+  } else if (evt.target.classList.contains('error__button')){
     closeErrorMessage();
   }
 }
